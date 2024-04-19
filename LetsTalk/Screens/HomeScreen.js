@@ -8,7 +8,7 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import UserCard from '../Components/Home/UserCard';
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -47,8 +47,8 @@ const HomeScreen = () => {
 
           <AntDesignIcon
             onPress={() => {
-              AsyncStorage.removeItem('authToken');
-              navigation.navigate('Login');
+              AsyncStorage.clear();
+              navigation.replace('Login')
             }}
             name="poweroff"
             size={25}

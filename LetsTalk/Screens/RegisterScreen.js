@@ -11,6 +11,8 @@ import {
   Image,
   ScrollView,
   Modal,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -27,7 +29,9 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
-import {ImageCircularProgress} from '../Components/Home/ImageCircularProgress';
+import AxiosInstance from '../Services/ApiServices';
+import {REGISTER_END_POINT} from '../Services/EndPoint';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -38,6 +42,19 @@ const RegisterScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
   const [imgPerc, setImgPerc] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const authenticationCheck = async () => {
+      const isAuth = await AsyncStorage.getItem('authToken');
+      if (isAuth) {
+        navigation.replace('Home');
+      } else {
+        // Login Page
+      }
+    };
+    authenticationCheck();
+  }, []);
 
   const ClickPhotoByCamera = () => {
     launchCamera({}, response => {
@@ -57,11 +74,9 @@ const RegisterScreen = () => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+        Alert.alert('Cancel');
       } else {
-        // Set selected image URI
         setSelectedImage(response?.assets[0].uri);
-        // console.log(response?.assets[0].uri)
       }
     });
   };
@@ -86,10 +101,8 @@ const RegisterScreen = () => {
         setImgPerc(Math.round(progress));
         switch (snapshot.state) {
           case 'paused':
-            console.log('Upload is paused');
             break;
           case 'running':
-            console.log('Upload is running');
             break;
           default:
             break;
@@ -110,7 +123,38 @@ const RegisterScreen = () => {
     selectedImage && uploadFile(selectedImage);
   }, [selectedImage]);
 
-  // console.log(imgPerc)
+  const handleRegister = () => {
+    if (email && name && password && imageUrl) {
+      setLoading(true);
+      const payload = {
+        email:email.toLowerCase(),
+        name,
+        password,
+        image: imageUrl,
+      };
+      AxiosInstance.post(`${REGISTER_END_POINT}`, payload)
+        .then(res => {
+          if (res?.data) {
+            const token = res?.data?.token;
+            AsyncStorage.setItem('authToken', token);
+            Alert.alert('Registered Successfully');
+            navigation.replace('Home');
+            setEmail('');
+            SetPassword('');
+            setName('');
+            setSelectedImage(null);
+          }
+        })
+        .catch(err => {
+          Alert.alert(err?.message);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      Alert.alert('Fill all required fields');
+    }
+  };
 
   return (
     <>
@@ -142,18 +186,9 @@ const RegisterScreen = () => {
               </Text>
             </View>
 
-            <View style={{rowGap: 20, marginTop: 30}}>
+            <View style={{rowGap: 10, marginTop: 30}}>
               <View>
-                <Pressable
-                  style={{
-                    borderWidth : 2, 
-                    borderColor : 'black',
-                    borderRadius : 10,
-                    overflow : 'hidden',
-                    borderWidth: `${imgPerc}`,
-                  }}
-                  onPress={() => setModalVisible(true)}
-                  >
+                <Pressable onPress={() => setModalVisible(true)}>
                   {selectedImage ? (
                     <Image source={{uri: selectedImage}} style={styles.image} />
                   ) : (
@@ -202,7 +237,9 @@ const RegisterScreen = () => {
                 />
               </View>
             </View>
-            <Pressable
+            <TouchableOpacity
+              onPress={handleRegister}
+              disabled={loading || imgPerc != 100}
               style={{
                 width: '60%',
                 alignSelf: 'center',
@@ -214,9 +251,9 @@ const RegisterScreen = () => {
                 marginTop: 20,
               }}>
               <Text style={{fontSize: 18, color: 'white', textAlign: 'center'}}>
-                Register
+                {loading ? 'Loading...' : 'Sign Up'}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
 
             <Pressable onPress={() => navigation.goBack()}>
               <Text style={{fontSize: 17, marginTop: 20, textAlign: 'center'}}>
@@ -245,9 +282,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
+    width: 80,
+    height: 80,
+    resizeMode: 'cover',
     marginBottom: 10,
     borderRadius: 50,
     alignSelf: 'center',
