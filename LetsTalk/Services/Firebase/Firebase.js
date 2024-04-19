@@ -1,15 +1,15 @@
-import { initializeApp } from "@react-native-firebase/app";
-import {getAuth, GoogleAuthProvider} from '@react-native-firebase/auth'
+import { initializeApp } from "firebase/app";
+import {getAuth, GoogleAuthProvider} from 'firebase/auth'
 const firebaseConfig = {
-  apiKey: "AIzaSyCqR5NaDIFwSotYbhRFoW08SGofaUjWs-k",
-  authDomain: "clone-9a0d1.firebaseapp.com",
-  projectId: "clone-9a0d1",
-  storageBucket: "clone-9a0d1.appspot.com",
-  messagingSenderId: "837853890609",
-  appId: "1:837853890609:web:8a017a94aaf057fee56d10"
+  apiKey: "AIzaSyD5ZxlGVo54BmYAf52MSia7liZ1lm-CJ2o",
+  authDomain: "lets-connect-chat-app-3f8fc.firebaseapp.com",
+  projectId: "lets-connect-chat-app-3f8fc",
+  storageBucket: "lets-connect-chat-app-3f8fc.appspot.com",
+  messagingSenderId: "977265989922",
+  appId: "1:977265989922:web:fa0017db3911046a3dad7b"
 };
-
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
 export const provider = new GoogleAuthProvider()
 export const firebaseAuth = getAuth()
+

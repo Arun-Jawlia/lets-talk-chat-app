@@ -21,13 +21,13 @@ import {
   firebaseApp,
   provider,
 } from '../Services/Firebase/Firebase';
-import {signInWithPopup} from '@react-native-firebase/app';
 import {
   getStorage,
   ref,
   uploadBytesResumable,
-  
-} from '@react-native-firebase/storage';
+  getDownloadURL,
+} from 'firebase/storage';
+import {ImageCircularProgress} from '../Components/Home/ImageCircularProgress';
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -37,7 +37,7 @@ const RegisterScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
-  const [imgPerc, setImgePerc] = useState(0);
+  const [imgPerc, setImgPerc] = useState(0);
 
   const ClickPhotoByCamera = () => {
     launchCamera({}, response => {
@@ -66,44 +66,51 @@ const RegisterScreen = () => {
     });
   };
 
-  // const uploadFile = file => {
-  //   const storage = getStorage(firebaseApp);
-  //   const fileName = new Date().getTime() + file.name;
-  //   const storageRef = ref(storage, fileName);
-  //   const uploadTask = uploadBytesResumable(storageRef, file);
+  const uploadFile = async file => {
+    const response = await fetch(file);
+    const blob = await response.blob();
+    const storage = getStorage(firebaseApp);
+    const fileName =
+      new Date().getTime() +
+      '-' +
+      Math.random().toString(36).substring(7) +
+      '.jpg';
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, blob);
 
-  //   uploadTask.on(
-  //     'state_changed',
-  //     snapshot => {
-  //       const progress =
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //       setImgPerc(Math.round(progress));
-  //       switch (snapshot.state) {
-  //         case 'paused':
-  //           console.log('Upload is paused');
-  //           break;
-  //         case 'running':
-  //           console.log('Upload is running');
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //     },
-  //     error => {},
+    uploadTask.on(
+      'state_changed',
+      snapshot => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImgPerc(Math.round(progress));
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+          default:
+            break;
+        }
+      },
+      error => {},
 
-  //     () => {
-  //       // Upload completed successfully, now we can get the download URL
-  //       getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-  //         console.log(downloadURL);
-  //         setImg(downloadURL);
-  //       });
-  //     },
-  //   );
-  // };
+      () => {
+        // Upload completed successfully, now we can get the download URL
+        getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+          setImageUrl(downloadURL);
+        });
+      },
+    );
+  };
 
-  // useEffect(() => {
-  //   selectedImage && uploadFile(selectedImage);
-  // }, [selectedImage]);
+  useEffect(() => {
+    selectedImage && uploadFile(selectedImage);
+  }, [selectedImage]);
+
+  // console.log(imgPerc)
 
   return (
     <>
@@ -134,9 +141,19 @@ const RegisterScreen = () => {
                 Create your account
               </Text>
             </View>
+
             <View style={{rowGap: 20, marginTop: 30}}>
               <View>
-                <Pressable onPress={() => setModalVisible(true)}>
+                <Pressable
+                  style={{
+                    borderWidth : 2, 
+                    borderColor : 'black',
+                    borderRadius : 10,
+                    overflow : 'hidden',
+                    borderWidth: `${imgPerc}`,
+                  }}
+                  onPress={() => setModalVisible(true)}
+                  >
                   {selectedImage ? (
                     <Image source={{uri: selectedImage}} style={styles.image} />
                   ) : (
@@ -148,6 +165,11 @@ const RegisterScreen = () => {
                     />
                   )}
                 </Pressable>
+                {selectedImage && (
+                  <Text style={{textAlign: 'center'}}>
+                    {imgPerc > 0 && imgPerc} %
+                  </Text>
+                )}
               </View>
 
               <View>
