@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 
-const UserCard = () => {
+const UserCard = ({item}) => {
   return (
     <View
       style={{
@@ -28,14 +28,14 @@ const UserCard = () => {
         paddingVertical:20
       }}>
       <Image
-        style={{height: 100, width: 80, borderRadius: 10, flex:1, resizeMode:'cover'}}
+        style={{height: 120, width: 100, borderRadius: 10, flex:1, resizeMode:'cover'}}
         source={{
-          uri: 'https://cdn.pixabay.com/photo/2015/06/22/08/38/siblings-817369_1280.jpg',
+          uri: item?.image,
         }}
       />
      <View style={{alignSelf:'center', flex:1, }}>
-     <Text style={{fontSize: 24, fontWeight: 500, textAlign:'left'}}>Arun Jawlia</Text>
-      <Text >@aj</Text>
+     <Text style={{fontSize: 24, fontWeight: 500, textAlign:'left'}}>{(item.name)}</Text>
+      <Text >@{item.email}</Text>
       <View style={{flexDirection: 'row', columnGap: 10, marginTop: 10}}>
         <TouchableOpacity
           style={{
