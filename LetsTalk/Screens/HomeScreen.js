@@ -14,10 +14,14 @@ const HomeScreen = () => {
     navigation.setOptions({
       title: '',
 
+      headerStyle:{
+        backgroundColor:'#3b5998'
+      },
+
       headerLeft: () => (
         <View>
-          <Text  style={{fontSize: 40, fontWeight: 'bold', color: '#3b5998'}}>
-            Let's Talk
+          <Text  style={{fontSize: 35, fontWeight: 'bold', color: '#fff'}}>
+            Let's Connect
           </Text>
         </View>
       ),
@@ -30,7 +34,7 @@ const HomeScreen = () => {
             }}
             name="chatbox-ellipses-outline"
             size={30}
-            color="black"
+            color="#fff"
           />
           <Ionicon
             onPress={() => {
@@ -38,7 +42,7 @@ const HomeScreen = () => {
             }}
             name="notifications-outline"
             size={30}
-            color="black"
+            color="#fff"
           />
 
           <AntDesignIcon
@@ -48,7 +52,7 @@ const HomeScreen = () => {
             }}
             name="poweroff"
             size={25}
-            color="black"
+            color="#fff"
           />
         </View>
       ),
@@ -56,7 +60,7 @@ const HomeScreen = () => {
   }, [navigation]);
 
   return (
-    <ScrollView scrollEnabled style={{paddingVertical: 10,paddingHorizontal:20, height: '100%', marginBottom:20}}>
+    <ScrollView scrollEnabled style={{paddingVertical: 10,paddingHorizontal:20, height: '100%', marginBottom:20, backgroundColor:'#f2f2f2'}}>
       {[...Array(10).keys()].map(index => (
         <UserCard key={index} />
       ))}

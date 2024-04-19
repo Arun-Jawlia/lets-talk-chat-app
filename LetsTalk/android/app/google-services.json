@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "930352372459",
+    "project_id": "lets-connect-chat-app",
+    "storage_bucket": "lets-connect-chat-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930352372459:android:ad4297d47ba9ba79dcfcae",
+        "android_client_info": {
+          "package_name": "com.letstalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyAyGR96185uoPE7Gm8axyEghxL8cRAfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

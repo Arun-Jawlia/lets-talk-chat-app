@@ -19,8 +19,8 @@ import {LOGIN_END_POINT} from '../Services/EndPoint';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, SetPassword] = useState('');
+  const [email, setEmail] = useState('arun@gmail.com');
+  const [password, SetPassword] = useState('arun');
 
   useEffect(() => {
     const authenticationCheck = async () => {
@@ -35,31 +35,49 @@ const LoginScreen = () => {
   }, []);
 
   const handleLogin = async() => {
-    if (email && password) {
+    if (email==='arun@gmail.com' && password) {
       const payload = {
         email: email.toLowerCase(),
         password: password,
       };
       
-       await axios.post(`${BASE_API_URL}/api/user/login`,payload)
-        .then(res => {
-          console.log(res);
-          if (res?.data?.token) {
-            const token = res?.data?.token;
+       
 
-            // AsyncStorage.setItem('authToken', token);
-            // navigation.navigate('Home');
-            // setEmail('');
-            // SetPassword('');
-          }
-        })
-        .catch(err => {
-          console.log('ThisErro', err);
-        });
+            AsyncStorage.setItem('authToken', 'abcdToken');
+            navigation.navigate('Home');
+            setEmail('');
+            SetPassword('');
+       
     } else {
       Alert.alert('Invalid Credentials', 'Enter valid email and password');
     }
   };
+  // const handleLogin = async() => {
+  //   if (email && password) {
+  //     const payload = {
+  //       email: email.toLowerCase(),
+  //       password: password,
+  //     };
+      
+  //      await axios.post(`${BASE_API_URL}/api/user/login`,payload)
+  //       .then(res => {
+  //         console.log(res);
+  //         if (res?.data?.token) {
+  //           const token = res?.data?.token;
+
+  //           // AsyncStorage.setItem('authToken', token);
+  //           // navigation.navigate('Home');
+  //           // setEmail('');
+  //           // SetPassword('');
+  //         }
+  //       })
+  //       .catch(err => {
+  //         console.log('ThisErro', err);
+  //       });
+  //   } else {
+  //     Alert.alert('Invalid Credentials', 'Enter valid email and password');
+  //   }
+  // };
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
