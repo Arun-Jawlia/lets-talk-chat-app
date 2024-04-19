@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -21,6 +22,7 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('arun@gmail.com');
   const [password, SetPassword] = useState('arun');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const authenticationCheck = async () => {
@@ -34,50 +36,36 @@ const LoginScreen = () => {
     authenticationCheck();
   }, []);
 
-  const handleLogin = async() => {
-    if (email==='arun@gmail.com' && password) {
+  const handleLogin = async () => {
+    if (email && password) {
+      setLoading(true);
       const payload = {
         email: email.toLowerCase(),
-        password: password,
+        password,
       };
-      
-       
 
-            AsyncStorage.setItem('authToken', 'abcdToken');
-            navigation.navigate('Home');
+      AxiosInstance.post(`${LOGIN_END_POINT}`, payload)
+        .then(res => {
+          if (res?.data?.token) {
+            const token = res?.data?.token;
+            AsyncStorage.setItem('authToken', token);
+            navigation.replace('Home');
             setEmail('');
             SetPassword('');
-       
+          }
+        })
+        .catch(err => {
+          if (err.response.status == '404') {
+            Alert.alert('User Not Found');
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
       Alert.alert('Invalid Credentials', 'Enter valid email and password');
     }
   };
-  // const handleLogin = async() => {
-  //   if (email && password) {
-  //     const payload = {
-  //       email: email.toLowerCase(),
-  //       password: password,
-  //     };
-      
-  //      await axios.post(`${BASE_API_URL}/api/user/login`,payload)
-  //       .then(res => {
-  //         console.log(res);
-  //         if (res?.data?.token) {
-  //           const token = res?.data?.token;
-
-  //           // AsyncStorage.setItem('authToken', token);
-  //           // navigation.navigate('Home');
-  //           // setEmail('');
-  //           // SetPassword('');
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.log('ThisErro', err);
-  //       });
-  //   } else {
-  //     Alert.alert('Invalid Credentials', 'Enter valid email and password');
-  //   }
-  // };
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -128,8 +116,9 @@ const LoginScreen = () => {
               />
             </View>
           </View>
-          <Pressable
+          <TouchableOpacity
             onPress={handleLogin}
+            disabled={loading}
             style={{
               width: '60%',
               alignSelf: 'center',
@@ -141,9 +130,9 @@ const LoginScreen = () => {
               marginTop: 20,
             }}>
             <Text style={{fontSize: 18, color: 'white', textAlign: 'center'}}>
-              Login
+              {loading ? "Loading..." : "Login"}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
 
           <Pressable onPress={() => navigation.navigate('Register')}>
             <Text style={{fontSize: 17, marginTop: 20, textAlign: 'center'}}>
