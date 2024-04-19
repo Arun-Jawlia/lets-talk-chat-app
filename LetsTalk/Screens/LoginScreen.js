@@ -1,3 +1,4 @@
+<script src="http://192.168.1.24:8097"></script>;
 import {
   Alert,
   KeyboardAvoidingView,
@@ -12,11 +13,14 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AxiosInstance, {BASE_API_URL, BASE_URL} from '../Services/ApiServices';
+import axios from 'axios';
+import {LOGIN_END_POINT} from '../Services/EndPoint';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('arun@gmail.com');
-  const [password, SetPassword] = useState('Arun');
+  const [email, setEmail] = useState('');
+  const [password, SetPassword] = useState('');
 
   useEffect(() => {
     const authenticationCheck = async () => {
@@ -30,13 +34,28 @@ const LoginScreen = () => {
     authenticationCheck();
   }, []);
 
-  const handleLogin = () => {
-    const token = 'ab12cd34#$';
-    if (email.toLowerCase() === 'arun@gmail.com' && password === 'Arun') {
-      AsyncStorage.setItem('authToken', token);
-      navigation.navigate('Home');
-      setEmail('');
-      SetPassword('');
+  const handleLogin = async() => {
+    if (email && password) {
+      const payload = {
+        email: email.toLowerCase(),
+        password: password,
+      };
+      
+       await axios.post(`${BASE_API_URL}/api/user/login`,payload)
+        .then(res => {
+          console.log(res);
+          if (res?.data?.token) {
+            const token = res?.data?.token;
+
+            // AsyncStorage.setItem('authToken', token);
+            // navigation.navigate('Home');
+            // setEmail('');
+            // SetPassword('');
+          }
+        })
+        .catch(err => {
+          console.log('ThisErro', err);
+        });
     } else {
       Alert.alert('Invalid Credentials', 'Enter valid email and password');
     }
