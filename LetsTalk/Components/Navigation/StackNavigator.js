@@ -28,7 +28,7 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Notification"
           component={NotificationScreen}
-          options={true}
+          options={{title:'Friend requests'}}
         />
         <Stack.Screen name="Chats" component={ChatScreen} options={true} />
       </Stack.Navigator>

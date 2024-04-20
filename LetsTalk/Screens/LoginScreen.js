@@ -55,6 +55,7 @@ const LoginScreen = () => {
           }
         })
         .catch(err => {
+          // console.error(err);
           if (err.response.status == '404') {
             Alert.alert('User Not Found');
           }

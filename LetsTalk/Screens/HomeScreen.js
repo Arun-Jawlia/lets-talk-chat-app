@@ -1,4 +1,11 @@
-import {Pressable, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import React, {useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +22,7 @@ const HomeScreen = () => {
   const {userId, setUserId} = useContext(userCreateContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -37,6 +45,7 @@ const HomeScreen = () => {
           <Ionicon
             onPress={() => {
               navigation.navigate('Chats');
+             
             }}
             name="chatbox-ellipses-outline"
             size={30}
@@ -55,6 +64,7 @@ const HomeScreen = () => {
             onPress={() => {
               AsyncStorage.clear();
               navigation.replace('Login');
+              setUserId('')
             }}
             name="poweroff"
             size={25}
@@ -65,35 +75,45 @@ const HomeScreen = () => {
     });
   }, [navigation]);
 
- 
+  useEffect(() => {
+    const handleUserId = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      const decodedToken = decodeToken(token)?.payload;
+      setUserId(decodedToken?.userId);
+    };
+    handleUserId();
+  }, []);
+
   const getAllUser = async () => {
-    const token = await AsyncStorage.getItem('authToken');
-    const decodedToken = decodeToken(token)?.payload;
-    setUserId(decodedToken?.userId);
-    
     try {
+      setRefreshing(true);
       setLoading(true);
       AxiosInstance.get(`${GET_ALL_USER_END_POINT}/${userId}`)
-      .then(res => {
-        console.log(res?.data?.users);
-        setData(res?.data?.users);
-
-      })
-      .catch(err => {
-        console.log(err);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-        } catch (error) {}
-      };
+        .then(res => {
+          // console.log(res?.data?.users);
+          setData(res?.data?.users);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          setLoading(false);
+          setRefreshing(false);
+        });
+    } catch (error) {}
+  };
   useEffect(() => {
-   getAllUser()
-    }, []);
-    
-    return (
-      <ScrollView
+    if (userId) {
+      getAllUser();
+    }
+  }, [userId]);
+
+  return (
+    <ScrollView
       scrollEnabled
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={getAllUser} />
+      }
       style={{
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -101,8 +121,8 @@ const HomeScreen = () => {
         marginBottom: 20,
         backgroundColor: '#f2f2f2',
       }}>
-      {data?.map((item,index) => (
-        <UserCard key={index} item={item} />
+      {data?.map((item, index) => (
+        <UserCard key={index} item={item} getAllUser={getAllUser} />
       ))}
     </ScrollView>
   );
