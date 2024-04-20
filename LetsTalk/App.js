@@ -5,20 +5,17 @@
  * @format
  */
 
-import { NavigationContainer } from '@react-navigation/native';
+
 import React from 'react';
 import StackNavigator from './Components/Navigation/StackNavigator';
-
-
+import {UserContext} from './ContextApi/UserContext';
 
 function App() {
- 
-  return(
-    <NavigationContainer>
-    <StackNavigator />
-  </NavigationContainer>
-  )
+  return (
+    <UserContext>
+      <StackNavigator />
+    </UserContext>
+  );
 }
-
 
 export default App;

@@ -20,8 +20,8 @@ import {LOGIN_END_POINT} from '../Services/EndPoint';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('arun@gmail.com');
-  const [password, SetPassword] = useState('arun');
+  const [email, setEmail] = useState('');
+  const [password, SetPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -55,6 +55,7 @@ const LoginScreen = () => {
           }
         })
         .catch(err => {
+          // console.error(err);
           if (err.response.status == '404') {
             Alert.alert('User Not Found');
           }
@@ -94,9 +95,9 @@ const LoginScreen = () => {
           </View>
           <View style={{rowGap: 30, marginTop: 30}}>
             <View>
-              <Text style={{fontSize: 18}}>Email</Text>
+              <Text style={{fontSize: 18}}>Username</Text>
               <TextInput
-                placeholder="Enter your email..."
+                placeholder="Enter your username..."
                 placeholderTextColor={'black'}
                 style={{borderBottomColor: 'black', borderBottomWidth: 1}}
                 onChangeText={text => setEmail(text)}

@@ -217,9 +217,9 @@ const RegisterScreen = () => {
                 />
               </View>
               <View>
-                <Text style={{fontSize: 18}}>Email</Text>
+                <Text style={{fontSize: 18}}>Username</Text>
                 <TextInput
-                  placeholder="Enter your email..."
+                  placeholder="Choose unique username..."
                   placeholderTextColor={'black'}
                   style={{borderBottomColor: 'black', borderBottomWidth: 1}}
                   onChangeText={text => setEmail(text)}
@@ -239,7 +239,7 @@ const RegisterScreen = () => {
             </View>
             <TouchableOpacity
               onPress={handleRegister}
-              disabled={loading || imgPerc != 100}
+              disabled={loading}
               style={{
                 width: '60%',
                 alignSelf: 'center',
