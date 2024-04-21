@@ -5,8 +5,9 @@ import LoginScreen from '../../Screens/LoginScreen';
 import RegisterScreen from '../../Screens/RegisterScreen';
 import HomeScreen from '../../Screens/HomeScreen';
 import NotificationScreen from '../../Screens/NotificationScreen';
-import ChatScreen from '../../Screens/ChatScreen';
+import ChatsScreen from '../../Screens/ChatsScreen';
 import {NavigationContainer} from '@react-navigation/native';
+import ChatScreen from '../../Screens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,8 @@ const StackNavigator = () => {
           component={NotificationScreen}
           options={{title:'Friend requests'}}
         />
-        <Stack.Screen name="Chats" component={ChatScreen} options={true} />
+        <Stack.Screen name="Chats" component={ChatsScreen} options={true} />
+        <Stack.Screen name="Chat" component={ChatScreen} options={true} />
       </Stack.Navigator>
     </NavigationContainer>
   );
